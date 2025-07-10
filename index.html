@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to SQL Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CSV to SQL Converter</h1>
+            <p>Drag and drop your CSV file to convert it to SQL statements</p>
+        </header>
+
+        <div class="upload-section">
+            <div id="dropZone" class="drop-zone">
+                <div class="drop-content">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7,10 12,15 17,10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <h3>Drop your CSV files here</h3>
+                    <p>or <button id="browseBtn" class="browse-btn">browse files</button></p>
+                    <input type="file" id="fileInput" accept=".csv" multiple style="display: none;">
+                    <small>You can select multiple CSV files at once</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="options-section" id="optionsSection" style="display: none;">
+            <div class="options-header">
+                <h3>🔧 Configuration Options</h3>
+            </div>
+            
+            <div class="options-container">
+                <div class="options-group">
+                    <div class="options-grid">
+                        <div class="option">
+                            <label for="tableName">
+                                <span class="label-text">Table Name</span>
+                            </label>
+                            <input type="text" id="tableName" placeholder="e.g., user_data">
+                        </div>
+                        <div class="option">
+                            <label for="dbType">
+                                <span class="label-text">Database</span>
+                            </label>
+                            <select id="dbType">
+                                <option value="mysql">🐬 MySQL</option>
+                                <option value="postgresql">🐘 PostgreSQL</option>
+                            </select>
+                        </div>
+                        <div class="option">
+                            <label for="varcharLength">
+                                <span class="label-text">Max VARCHAR</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" id="varcharLength" value="255" min="1" max="65535">
+                                <span class="input-unit">chars</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="toggle-row">
+                        <div class="toggle-option">
+                            <input type="checkbox" id="optimizeTypes" checked>
+                            <label for="optimizeTypes" class="toggle-label">
+                                <span class="toggle-switch"></span>
+                                <span class="toggle-text">Smart Type Detection</span>
+                            </label>
+                        </div>
+                        <div class="toggle-option">
+                            <input type="checkbox" id="includeDropTable" checked>
+                            <label for="includeDropTable" class="toggle-label">
+                                <span class="toggle-switch"></span>
+                                <span class="toggle-text">Include DROP TABLE</span>
+                            </label>
+                        </div>
+                        <div class="toggle-option">
+                            <input type="checkbox" id="includeInserts" checked>
+                            <label for="includeInserts" class="toggle-label">
+                                <span class="toggle-switch"></span>
+                                <span class="toggle-text">Include INSERT Statements</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <div class="result-header">
+                <h3>Generated SQL</h3>
+                <div class="result-actions">
+                    <button id="copyBtn" class="action-btn">Copy to Clipboard</button>
+                    <button id="downloadBtn" class="action-btn primary">Download SQL File</button>
+                </div>
+            </div>
+            <pre id="sqlOutput" class="sql-output"></pre>
+        </div>
+
+        <div class="file-info" id="fileInfo" style="display: none;">
+            <h3>File Information</h3>
+            <div id="fileDetails"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
