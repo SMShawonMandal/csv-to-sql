@@ -480,7 +480,7 @@ class CSVToSQLConverter {
     }
 
     isDateValue(value, columnName) {
-        // Common date patterns
+        // Common date patterns (date only)
         const datePatterns = [
             /^\d{4}-\d{1,2}-\d{1,2}$/, // YYYY-MM-DD or YYYY-M-D
             /^\d{1,2}\/\d{1,2}\/\d{4}$/, // MM/DD/YYYY or M/D/YYYY
@@ -490,17 +490,25 @@ class CSVToSQLConverter {
             /^\d{4}\.\d{1,2}\.\d{1,2}$/, // YYYY.MM.DD or YYYY.M.D
         ];
 
-        // Check if value matches any date pattern
-        const matchesPattern = datePatterns.some(pattern => pattern.test(value));
+        // DateTime patterns (includes time component)
+        const dateTimePatterns = [
+            /^\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}/, // YYYY-MM-DD HH:MM
+            /^\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{1,2}/, // MM/DD/YYYY HH:MM
+            /^\d{4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}/, // ISO format
+        ];
+
+        // Check if value matches any date or datetime pattern
+        const matchesDatePattern = datePatterns.some(pattern => pattern.test(value));
+        const matchesDateTimePattern = dateTimePatterns.some(pattern => pattern.test(value));
         
-        if (matchesPattern) {
+        if (matchesDatePattern || matchesDateTimePattern) {
             // Try to parse as date to validate
             const date = new Date(value);
             return !isNaN(date.getTime()) && date.getFullYear() > 1900 && date.getFullYear() < 2100;
         }
 
         // Check if column name suggests it's a date
-        const dateKeywords = ['date', 'time', 'created', 'updated', 'modified', 'birth', 'start', 'end', 'pickup', 'return', 'due', 'expire'];
+        const dateKeywords = ['date', 'time', 'created', 'updated', 'modified', 'birth', 'start', 'end', 'pickup', 'return', 'due', 'expire', 'login'];
         const columnLower = columnName.toLowerCase();
         const hasDateKeyword = dateKeywords.some(keyword => columnLower.includes(keyword));
         
