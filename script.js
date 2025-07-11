@@ -595,16 +595,17 @@ class CSVToSQLConverter {
         const tableName = document.getElementById('tableName').value || 'imported_table';
         const includeDropTable = document.getElementById('includeDropTable').checked;
         const includeInserts = document.getElementById('includeInserts').checked;
+        const quote = this.getIdentifierQuote();
 
         let sql = '';
 
         // Drop table statement
         if (includeDropTable) {
-            sql += `DROP TABLE IF EXISTS \`${tableName}\`;\n`;
+            sql += `DROP TABLE IF EXISTS ${quote}${tableName}${quote};\n`;
         }
 
         // Create table statement
-        sql += `CREATE TABLE \`${tableName}\` (\n`;
+        sql += `CREATE TABLE ${quote}${tableName}${quote} (\n`;
 
         // Get column data for type detection
         const columnData = {};
@@ -622,7 +623,7 @@ class CSVToSQLConverter {
         const columnDefs = this.csvData.headers.map(header => {
             const cleanHeader = header.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
             const columnType = columnTypes[header];
-            return `    \`${cleanHeader}\`\t${columnType}`;
+            return `    ${quote}${cleanHeader}${quote}\t${columnType}`;
         });
 
         sql += columnDefs.join(',\n');
@@ -631,7 +632,7 @@ class CSVToSQLConverter {
         // Insert statements
         if (includeInserts && this.csvData.rows.length > 0) {
             sql += '\n';
-            sql += `INSERT INTO \`${tableName}\` \nVALUES `;
+            sql += `INSERT INTO ${quote}${tableName}${quote} \nVALUES `;
             
             const valueRows = [];
             for (const row of this.csvData.rows) {
@@ -859,15 +860,16 @@ class CSVToSQLConverter {
     }
 
     generateSQLForFile(csvData, tableName, includeDropTable, includeInserts) {
+        const quote = this.getIdentifierQuote();
         let sql = '';
 
         // Drop table statement
         if (includeDropTable) {
-            sql += `DROP TABLE IF EXISTS \`${tableName}\`;\n`;
+            sql += `DROP TABLE IF EXISTS ${quote}${tableName}${quote};\n`;
         }
 
         // Create table statement
-        sql += `CREATE TABLE \`${tableName}\` (\n`;
+        sql += `CREATE TABLE ${quote}${tableName}${quote} (\n`;
 
         // Get column data for type detection
         const columnData = {};
@@ -885,7 +887,7 @@ class CSVToSQLConverter {
         const columnDefs = csvData.headers.map(header => {
             const cleanHeader = header.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
             const columnType = columnTypes[header];
-            return `    \`${cleanHeader}\`\t${columnType}`;
+            return `    ${quote}${cleanHeader}${quote}\t${columnType}`;
         });
 
         sql += columnDefs.join(',\n');
@@ -894,7 +896,7 @@ class CSVToSQLConverter {
         // Insert statements
         if (includeInserts && csvData.rows.length > 0) {
             sql += '\n';
-            sql += `INSERT INTO \`${tableName}\` \nVALUES `;
+            sql += `INSERT INTO ${quote}${tableName}${quote} \nVALUES `;
             
             const valueRows = [];
             for (const row of csvData.rows) {
@@ -1031,6 +1033,11 @@ class CSVToSQLConverter {
             }
         }
         return baseType;
+    }
+
+    getIdentifierQuote() {
+        const dbType = document.getElementById('dbType').value;
+        return dbType === 'postgresql' ? '"' : '`';
     }
 }
 
